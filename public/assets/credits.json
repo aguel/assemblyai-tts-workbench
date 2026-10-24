@@ -1,0 +1,63 @@
+[
+  {
+    "file": "/assets/scene-airport.jpg",
+    "kind": "Photo",
+    "title": "Departure board in gates A at Zurich International Airport",
+    "creator": "Stimpy",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Departure_board_in_gates_A_at_Zurich_International_Airport.jpg",
+    "changes": "Resized to 1600 px wide."
+  },
+  {
+    "file": "/assets/scene-cockpit.jpg",
+    "kind": "Photo",
+    "title": "Boeing 707-123B cockpit, Deutsches Museum",
+    "creator": "Wilfredor",
+    "license": "CC0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "source": "https://commons.wikimedia.org/wiki/File:Boeing_707-123B_cockpit,_Deutsches_Museum.jpg",
+    "changes": "Resized to 1600 px wide."
+  },
+  {
+    "file": "/assets/scene-cathedral.jpg",
+    "kind": "Photo",
+    "title": "Roma, sant'ignazio, interno 01",
+    "creator": "Sailko",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Roma,_sant%27ignazio,_interno_01.jpg",
+    "changes": "Resized to 2000 px wide."
+  },
+  {
+    "file": "/assets/scene-platform-arrival.webm",
+    "poster": "/assets/scene-platform-arrival-poster.jpg",
+    "kind": "Clip",
+    "title": "Southbound train arriving at Harvard station, 2018",
+    "creator": "Beantowndude316",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Southbound_train_arriving_at_Harvard_station,_2018.webm",
+    "changes": "Re-encoded without the audio track; poster taken from a frame."
+  },
+  {
+    "file": "/assets/scene-snow.jpg",
+    "kind": "Photo",
+    "title": "Snowy morning in Sangla, Himachal Pradesh, India",
+    "creator": "UnpetitproleX",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Snowy_morning_in_Sangla,_Himachal_Pradesh,_India.jpg",
+    "changes": "Resized to 1800 px wide."
+  },
+  {
+    "file": "/assets/scene-bedtime.jpg",
+    "kind": "Painting",
+    "title": "Reverie (1893)",
+    "creator": "Charles-Amable Lenoir",
+    "license": "Public domain",
+    "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Lenoir,_Charles-Amable_-_Reverie.jpg",
+    "changes": "Resized to 1600 px wide."
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "name": "assemblyai-tts-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Text to Speech Workbench, powered by AssemblyAI. A one-page studio for streaming text-to-speech: pick a scene, edit the announcement, choose a voice and watch each word land as it is spoken.",
+  "scripts": {
+    "dev": "node scripts/run.mjs dev",
+    "build": "next build",
+    "start": "node scripts/run.mjs start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test:tts": "node scripts/smoke.mjs",
+    "voices": "node scripts/voices.mjs"
+  },
+  "dependencies": {
+    "next": "16.4.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.2",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

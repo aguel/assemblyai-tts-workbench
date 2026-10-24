@@ -1,0 +1,344 @@
+/* Text to Speech Workbench, the announcement studio. Direction "The product performs" (tasteskill seed 54120104):
+   navy on white, a near-black stage, one tangerine accent.
+   Quiet by design: one column of controls on the left, one picture on the right, and the
+   message set on it one caption at a time.
+
+   Type: one family, Geist, in three weights. A four-step scale with clear jumps:
+   caption and title (display, 500, tight), lead (19px), body (16px), small (14px, labels).
+   Every value below the tokens references a token. */
+
+:root {
+  --bg: #ffffff;
+  --surface: #f3f3f1;
+  --surface-2: #e7e6e2;
+  --ink: #1f2b4d;
+  --muted: #5d6479;
+  --accent: #f7941d;
+  --accent-hover: #ffa83f;
+  --accent-ink: #1f2b4d;
+  --field-1: #05070a;
+  --field-1-ink: #ffffff;
+  --field-1-soft: #d3d8e2;
+  --shade: rgb(5 7 10 / 0.46);
+  --danger: #b3261e;
+
+  --font: var(--nf-sans), system-ui, sans-serif;
+
+  /* the scale */
+  --step-small: 0.875rem;  /* 14: labels, counts, credit */
+  --step-body: 1rem;       /* 16: controls */
+  --step-lead: 1.1875rem;  /* 19: the message and the lede */
+  --step-display: clamp(2.25rem, 1.1rem + 3vw, 4rem);   /* the caption on the picture */
+  --step-title: clamp(2.75rem, 1.2rem + 3.9vw, 4.75rem); /* the page title */
+
+  --w-regular: 400;
+  --w-medium: 500;
+  --w-bold: 600;
+  --track-display: -0.045em;
+  --track-tight: -0.011em;
+
+  --margin: clamp(1.25rem, 3vw, 3rem);
+  --pill: 999px;
+  --field-radius: 20px;
+  --control: 3rem;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  /* critically damped springs, sampled (stiffness/damping 170/22 and 220/19) */
+  --spring: linear(0, 0.053, 0.161, 0.301, 0.433, 0.555, 0.661, 0.75, 0.825, 0.879, 0.92, 0.95, 0.973, 0.987, 0.996, 1.001, 1.004, 1.006, 1.006, 1.006, 1.005, 1.004, 1.003, 1.003, 1);
+  --spring-pop: linear(0, 0.047, 0.153, 0.297, 0.445, 0.589, 0.717, 0.826, 0.915, 0.979, 1.024, 1.052, 1.067, 1.072, 1.069, 1.061, 1.052, 1.041, 1.03, 1.021, 1.013, 1.007, 1.002, 0.999, 0.996, 0.995, 0.995, 0.995, 0.996, 0.996, 1);
+  --t-press: 140ms;
+  --t-hover: 180ms;
+  --t-ui: 240ms;
+  --t-reveal: 800ms;
+}
+
+/* ---------- reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--bg); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--step-body);
+  font-weight: var(--w-regular);
+  line-height: 1.5;
+  letter-spacing: var(--track-tight);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, p { margin: 0; }
+img, video, svg { display: block; max-width: 100%; }
+button, select, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.nums { font-variant-numeric: tabular-nums; }
+
+/* ======================================================================
+   Layout
+   ====================================================================== */
+.studio {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "head stage" "composer stage";
+  min-height: 100svh;
+}
+.head { grid-area: head; padding: 2rem var(--margin) 0; }
+.composer {
+  grid-area: composer; container-type: inline-size;
+  align-self: end;
+  display: grid; gap: 1.5rem;
+  padding: 3rem var(--margin) 2.5rem;
+}
+.stage-wrap { grid-area: stage; position: sticky; top: 0; align-self: start; height: 100svh; }
+
+/* the top line: the two-line wordmark, and "Powered by AssemblyAI" set opposite it to match */
+.topline { display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; }
+.wordmark, .powered {
+  display: grid; text-decoration: none;
+  font-size: var(--step-body); line-height: 1.15; letter-spacing: -0.02em;
+}
+.wm-line { font-weight: var(--w-bold); }
+.wm-second { font-weight: var(--w-regular); color: var(--muted); }
+.powered { justify-items: end; text-align: right; }
+.powered-mask { display: block; overflow: hidden; }
+.powered-by { display: block; font-weight: var(--w-regular); color: var(--muted); }
+.powered-name { display: block; font-weight: var(--w-bold); white-space: nowrap; }
+.pl { display: inline-block; transition: color var(--t-ui) ease; }
+.powered.is-live .pl { color: var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .powered:hover .pl { transform: translateY(-0.12em); transition: transform 320ms var(--spring-pop); transition-delay: calc(var(--i) * 18ms); }
+}
+.title {
+  margin-top: clamp(3rem, 12svh, 8rem);
+  font-size: var(--step-title); font-weight: var(--w-medium);
+  line-height: 0.95; letter-spacing: var(--track-display);
+}
+.lines .line { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.lines [data-line] { display: block; }
+.lede { margin-top: 1.5rem; font-size: var(--step-lead); line-height: 1.45; max-width: 30ch; }
+
+/* ======================================================================
+   Controls: one pill shape for every button, one field shape for inputs
+   ====================================================================== */
+.button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  height: 3.5rem; padding: 0 1.75rem;
+  border-radius: var(--pill);
+  font-size: var(--step-body); font-weight: var(--w-medium); white-space: nowrap;
+  transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease;
+}
+.button:active { transform: scale(0.96); }
+.button:disabled { opacity: 0.5; cursor: default; }
+.button-accent { background: var(--accent); color: var(--accent-ink); font-weight: var(--w-bold); }
+.button-quiet { background: var(--surface); color: var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .button-accent:hover { background: var(--accent-hover); }
+  .button-quiet:hover:not(:disabled) { background: var(--surface-2); }
+}
+.text-button {
+  font-size: var(--step-small); font-weight: var(--w-medium);
+  text-decoration: underline; text-underline-offset: 0.25em; text-decoration-thickness: 0.07em;
+}
+
+/* scene tabs: a segmented control whose highlight glides (useGlide in hooks.ts) */
+.tabs {
+  position: relative;
+  display: flex; gap: 2px; padding: 4px;
+  background: var(--surface); border-radius: var(--pill);
+}
+.tab {
+  position: relative; flex: 1 1 0; min-width: 0;
+  height: 2.75rem; padding: 0 0.5rem; border-radius: var(--pill);
+  font-size: var(--step-small); font-weight: var(--w-medium); color: var(--ink);
+  transition: color var(--t-ui) ease, transform var(--t-press) var(--ease-out);
+}
+.tab:active { transform: scale(0.95); }
+/* the ink ground lands on the tab itself once the glide has arrived */
+.tab[aria-checked="true"] { color: var(--bg); background: var(--ink); transition: color var(--t-ui) ease 100ms, background-color 0s linear 460ms, transform var(--t-press) var(--ease-out); }
+.indicator { position: absolute; inset: 0; z-index: 0; border-radius: inherit; background: var(--ink); transform-origin: 0 0; pointer-events: none; }
+.tab-label { position: relative; z-index: 1; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (hover: hover) and (pointer: fine) {
+  .tab:not([aria-checked="true"]):hover { color: var(--muted); }
+}
+@container (max-width: 520px) {
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-radius: 26px; }
+}
+
+/* message */
+.message-field { display: grid; gap: 0.6rem; }
+.message {
+  display: block; width: 100%; min-height: 10rem; resize: vertical;
+  padding: 1.15rem 1.35rem; border: 0; border-radius: var(--field-radius);
+  background: var(--surface); color: var(--ink);
+  font-size: var(--step-lead); line-height: 1.55; letter-spacing: -0.014em;
+  caret-color: var(--accent);
+  transition: background-color var(--t-hover) ease;
+}
+.message:hover { background: var(--surface-2); }
+.message:focus { outline: none; background: var(--surface-2); }
+.message:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.message-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; min-height: 1.5rem; padding: 0 0.35rem; }
+.hint, .count { font-size: var(--step-small); color: var(--muted); }
+
+/* settings */
+.settings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+.field { display: grid; gap: 0.45rem; min-width: 0; }
+.field label { font-size: var(--step-small); font-weight: var(--w-medium); color: var(--muted); padding-left: 0.35rem; }
+.select { position: relative; }
+.select select {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: var(--control); padding: 0 2.5rem 0 1.15rem;
+  border: 0; border-radius: var(--pill);
+  background: var(--surface); font-size: var(--step-body); font-weight: var(--w-medium);
+  cursor: pointer; text-overflow: ellipsis;
+  transition: background-color var(--t-hover) ease;
+}
+.select select:hover { background: var(--surface-2); }
+.chevron { position: absolute; right: 1.1rem; top: 50%; margin-top: -4px; pointer-events: none; color: var(--muted); }
+
+/* actions */
+.actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.play { min-width: 9.5rem; }
+.play-label { display: inline-block; }
+.status { font-size: var(--step-small); color: var(--muted); margin-left: auto; }
+.notice { color: var(--danger); font-size: var(--step-small); }
+
+/* play and stop cross over with a spring */
+.play-icon { flex: none; fill: currentColor; overflow: visible; }
+.play-icon path, .play-icon rect { transform-box: fill-box; transform-origin: center; transition: transform 420ms var(--spring-pop), opacity 160ms ease; }
+.play-icon .pi-stop { opacity: 0; transform: scale(0.3) rotate(-90deg); }
+.play-icon.is-live .pi-play { opacity: 0; transform: scale(0.3) rotate(90deg); }
+.play-icon.is-live .pi-stop { opacity: 1; transform: none; }
+
+/* ======================================================================
+   The stage
+   ====================================================================== */
+.stage {
+  position: relative; height: 100%; overflow: clip;
+  display: grid; grid-template-rows: 1fr auto;
+  background: var(--field-1); color: var(--field-1-ink);
+}
+.scenes-layer, .scene, .scene-mask, .scene-counter, .scene-level { position: absolute; inset: 0; }
+.scene { opacity: 0; }
+.scene.is-prev { opacity: 1; z-index: 1; }
+.scene.is-on { opacity: 1; z-index: 2; }
+.scene-mask, .scene-counter, .scene-level { overflow: hidden; }
+/* the camera (useCamera in stage.tsx): written per frame while playing, eased home on stop */
+.scene-level {
+  transform: translate(var(--cam-x, 0%), var(--cam-y, 0%)) scale(var(--cam-s, 1));
+  transition: transform 1400ms var(--ease-out);
+}
+.stage.is-live .scene-level { transition: none; }
+.scene img, .scene video { width: 100%; height: 100%; object-fit: cover; }
+.stage-shade { position: absolute; inset: 0; z-index: 3; background: var(--shade); pointer-events: none; }
+.caption, .stage-foot { position: relative; z-index: 4; }
+
+.caption { align-self: end; display: grid; padding: 0 var(--margin) 2.25rem; }
+.card {
+  grid-area: 1 / 1; max-width: 19ch;
+  font-size: var(--step-display); font-weight: var(--w-medium);
+  line-height: 1.02; letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.card.is-empty { color: var(--field-1-soft); }
+.card.is-leaving { pointer-events: none; }
+.cw { display: inline-block; }
+.cw-in { display: inline-block; transform-origin: 50% 80%; transition: opacity 220ms ease, color 160ms ease; }
+.stage.is-live .cw.is-ahead .cw-in { opacity: 0.4; }
+.cw.is-now .cw-in { color: var(--accent); }
+
+.stage-foot { display: grid; gap: 0.9rem; padding: 0 var(--margin) 1.75rem; }
+.stage-bar { display: flex; align-items: center; gap: 1rem; }
+.stage-play {
+  display: none; flex: none; place-items: center;
+  width: 3.5rem; height: 3.5rem; border-radius: 50%;
+  background: var(--accent); color: var(--accent-ink);
+  transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease;
+}
+.stage-play:active { transform: scale(0.92); }
+[data-ui].progress { flex: 1; display: flex; align-items: center; gap: 0.9rem; font-size: 13px; font-weight: 500; color: var(--field-1-soft); font-variant-numeric: tabular-nums; }
+[data-ui] .track { position: relative; flex: 1; height: 3px; border-radius: 2px; background: rgb(255 255 255 / 0.22); overflow: hidden; }
+[data-ui] .track-fill { position: absolute; inset: 0; background: var(--field-1-ink); transform-origin: left; transform: scaleX(0); }
+.stage-credit { font-size: var(--step-small); color: var(--field-1-soft); }
+.stage-credit a { text-decoration: none; transition: color var(--t-hover) ease; }
+.stage-credit a:hover { color: var(--field-1-ink); text-decoration: underline; text-underline-offset: 0.2em; }
+
+/* ======================================================================
+   Motion. Content is visible without JavaScript and with reduced motion;
+   hidden starting states apply only under html.js.
+   ====================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  .js .lines [data-line] { transform: translateY(105%); animation: line-up 1000ms var(--ease-out) forwards; animation-delay: calc(var(--i, 0) * 110ms + 100ms); }
+  .js [data-rise] { opacity: 0; transform: translateY(20px); animation: rise var(--t-reveal) var(--ease-out) forwards; animation-delay: calc(var(--i, 0) * 70ms + 240ms); }
+  /* the wordmark rises line by line; "Powered by" slides up out of its mask, then
+     AssemblyAI's letters spring up one by one. When a run starts the same sequence
+     replays, with "Streaming from" in place of "Powered by". */
+  .js .wm-line { opacity: 0; animation: rise 700ms var(--ease-out) forwards 60ms; }
+  .js .wm-second { animation-delay: 140ms; }
+  .powered-by { animation: mask-up 620ms var(--ease-out) both 260ms; }
+  .pl { animation: letter-in 680ms var(--spring-pop) both; animation-delay: calc(var(--i) * 32ms + 380ms); }
+  .powered.is-live .powered-by { animation-delay: 0ms; }
+  .powered.is-live .pl { animation-delay: calc(var(--i) * 26ms + 80ms); }
+
+  /* the scene wipes in from the right while its picture settles from a scale, then drifts */
+  .scene.is-on .scene-mask { animation: wipe-in 1100ms var(--ease-in-out) both; }
+  .scene.is-on .scene-counter { animation: wipe-counter 1100ms var(--ease-in-out) both; }
+  .scene.is-on img, .scene.is-on video { animation: settle 1800ms var(--ease-soft) both, drift 24s ease-in-out 1800ms infinite alternate; }
+  .scene.is-prev img { animation: recede 1100ms var(--ease-in-out) both; }
+  .js .stage-foot { animation: rise 900ms var(--ease-out) both 500ms; }
+
+  /* caption words spring up one by one, and leave upward */
+  .card:not(.is-leaving) .cw-in { animation: word-in 640ms var(--spring) both; animation-delay: calc(var(--i, 0) * 50ms + 100ms); }
+  .card.is-leaving .cw-in { animation: word-out 340ms var(--ease-in-out) both; animation-delay: calc(var(--i, 0) * 20ms); }
+  .stage.is-live .card:not(.is-leaving) .cw-in { animation-duration: 420ms; animation-delay: calc(var(--i, 0) * 26ms); }
+  .play-label { animation: label-in 360ms var(--spring) both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card.is-leaving { display: none; }
+  .powered:hover .pl { transform: none; }
+  .cw-in, .tab, .tab[aria-checked="true"] { transition: none; }
+}
+@keyframes line-up { to { transform: none; } }
+@keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes wipe-in { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes wipe-counter { from { transform: translateX(-100%); } to { transform: none; } }
+@keyframes settle { from { transform: scale(1.16); } to { transform: scale(1.04); } }
+@keyframes drift { from { transform: scale(1.04) translate(0, 0); } to { transform: scale(1.09) translate(-1.5%, -1%); } }
+@keyframes recede { from { transform: scale(1.04); opacity: 1; } to { transform: scale(0.97) translateX(-5%); opacity: 0.4; } }
+@keyframes word-in { from { opacity: 0; transform: translateY(0.5em) rotate(3deg); } to { opacity: 1; transform: none; } }
+@keyframes word-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(-0.4em); } }
+@keyframes mask-up { from { transform: translateY(105%); } to { transform: none; } }
+@keyframes letter-in { from { opacity: 0; transform: translateY(0.6em) scale(0.85); } to { opacity: 1; transform: none; } }
+@keyframes label-in { from { opacity: 0; transform: translateY(0.6em); } to { opacity: 1; transform: none; } }
+
+/* ======================================================================
+   Tablet and phone: title, the stage, then the composer
+   ====================================================================== */
+@media (max-width: 1000px) {
+  .studio { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "head" "stage" "composer"; }
+  .head { padding-bottom: 2rem; }
+  .title { margin-top: 2.5rem; }
+  .stage-wrap { position: relative; height: min(64svh, 560px); min-height: 420px; }
+  .composer { padding-top: 2rem; }
+  .stage-play { display: grid; }
+}
+@media (max-width: 620px) {
+  .head { padding-top: 1.25rem; padding-bottom: 1.5rem; }
+  .title { margin-top: 1.75rem; font-size: 13vw; }
+  .lede { font-size: 1.0625rem; }
+  .stage-wrap { height: 440px; min-height: 0; }
+  .card { font-size: 8.4vw; }
+  .settings { grid-template-columns: 1fr 1fr; }
+  .settings .field:first-child { grid-column: 1 / -1; }
+  .actions .button { flex: 1 1 0; padding: 0 1rem; }
+  .status { margin-left: 0; flex-basis: 100%; }
+}
